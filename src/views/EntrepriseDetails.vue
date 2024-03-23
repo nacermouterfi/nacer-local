@@ -1,19 +1,23 @@
 <template>
-  <div class="entreprise-detail-container">
+  <div v-if="entreprise" class="entreprise-detail-container">
     <div class="entreprise-header-card">
       <div class="logo-container">
-        <img :src="entreprise.logoUrl" alt="Logo de l'entreprise" class="entreprise-logo" />
+        <img
+          :src="`data:image/png; ${entreprise.image}`"
+          alt="Logo de l'entreprise"
+          class="entreprise-logo"
+        />
       </div>
       <div class="nom-container">
         <h3>Entreprise</h3>
-        <h2 class="entreprise-nom">{{ entreprise.nom }}</h2>
+        <h2 class="entreprise-nom">{{ entreprise.name }}</h2>
       </div>
     </div>
     <div class="entreprise-detail-wrapper">
       <div class="crud-icons">
         <i class="fa-solid fa-check" style="color: green"></i>
-        <i class="fa-solid fa-pen-to-square" style="color: gray"></i>
-        <i class="fa-solid fa-trash-can" style="color: red"></i>
+        <i class="fa-solid fa-pen-to-square" @click="mettreAjour" style="color: gray"></i>
+        <i class="fa-solid fa-trash-can" @click="supprimerEntreprise" style="color: red"></i>
       </div>
       <div class="entreprise-detail-container">
         <div class="entreprise-content">
@@ -22,44 +26,44 @@
           <div class="contact-section">
             <h3 class="section-title">Personne contact</h3>
             <p>
-              <span>{{ entreprise.contactNom }}</span>
+              <span>{{ entreprise.name }}</span>
             </p>
             <h3 class="section-title">Information de contact</h3>
             <div class="grid-container">
               <div class="adresse">
                 <div class="info-item">
                   <h4>Adresse</h4>
-                  <p>{{ entreprise.adresse }}</p>
+                  <p>{{ entreprise.address }}</p>
                 </div>
               </div>
               <div class="ville">
                 <div class="info-item">
                   <h4>Ville</h4>
-                  <p>{{ entreprise.ville }}</p>
+                  <p>{{ entreprise.city }}</p>
                 </div>
               </div>
               <div class="province">
                 <div class="info-item">
                   <h4>Province</h4>
-                  <p>{{ entreprise.province }}</p>
+                  <p>{{ entreprise.province.value }}</p>
                 </div>
               </div>
               <div class="cp">
                 <div class="info-item">
                   <h4>Code postal</h4>
-                  <p>{{ entreprise.cp }}</p>
+                  <p>{{ entreprise.postalCode }}</p>
                 </div>
               </div>
               <div class="telephone">
                 <div class="info-item">
                   <h4>Téléphone</h4>
-                  <p>{{ entreprise.telephone }}</p>
+                  <p>{{ entreprise.phone }}</p>
                 </div>
               </div>
               <div class="courriel">
                 <div class="info-item">
                   <h4>Courriel</h4>
-                  <p>{{ entreprise.courriel }}</p>
+                  <p>{{ entreprise.email }}</p>
                 </div>
               </div>
             </div>
@@ -71,28 +75,46 @@
 </template>
 
 <script>
-import logoUrl from '@/assets/mediavox-logo.jpg'
+import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
-  name: 'EntrepriseDetail',
+  name: 'EntrepriseDetails',
   data() {
     return {
-      entreprise: {
-        logoUrl,
-        nom: 'Mediavox',
-        description: 'Lorem ipsum dolor sit amet...',
-        contactNom: 'Louise St-Cyr',
-        adresse: '985, rue Royale, Trois-Rivières, G9A 4H7',
-        ville: 'Trois-Rivières',
-        province: 'Québec',
-        cp: 'G9A 4H7',
-        telephone: '819 373-2325',
-        courriel: 'info@mediavox.com'
+      entreprise: null
+    };
+  },
+  methods: {
+    async chargerEntreprise() {
+      try {
+        const response = await axios.get(`https://api-3.fly.dev/enterprises/${this.$route.params.id}`);
+        this.entreprise = response.data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des détails de l'entreprise:", error);
+      }
+    },
+    mettreAjour() {
+      this.$router.push({ name: 'EntrepriseMiseAjour', params: { id: this.entreprise._id } });
+    },
+    async supprimerEntreprise() {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')) {
+        try {
+          await axios.delete(`https://api-3.fly.dev/enterprises/${this.$route.params.id}`);
+          this.$router.push({ name: 'Entreprises' });
+        } catch (error) {
+          console.error('Erreur lors de la suppression de l\'entreprise:', error);
+        }
       }
     }
+  },
+  mounted() {
+    this.chargerEntreprise();
   }
 }
 </script>
+
+
 
 <style scoped>
 .entreprise-detail-container {

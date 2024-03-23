@@ -1,25 +1,23 @@
 <template>
   <div class="content">
-    <div class="header">
-      <h2>Entreprises</h2>
-      <button @click="ajouterEntreprise">Ajouter une entreprise</button>
-    </div>
+    <h1>Entreprises</h1>
+    <router-link to="/entreprises/ajouter" class="button">Ajouter une entreprise</router-link>
+
     <div class="grid">
       <router-link
         v-for="entreprise in entreprises"
-        :key="entreprise.id"
-        :to="{ name: 'EntrepriseDetail', params: { id: entreprise.id } }"
+        :key="entreprise._id"
+        :to="{ name: 'EntrepriseDetails', params: { id: entreprise._id } }"
         class="card"
-        tag="div"
       >
         <div class="logo">
-          <img :src="entreprise.logoUrl" alt="Logo de l'entreprise" />
+          <img :src="entreprise.image" alt="Logo de l'entreprise" />
         </div>
         <div class="informations">
-          <h2>{{ entreprise.nom }}</h2>
-          <p>{{ entreprise.adresse }}</p>
-          <p>Téléphone : {{ entreprise.telephone }}</p>
-          <p>Télécopieur : {{ entreprise.telecopieur }}</p>
+          <h2>{{ entreprise.name }}</h2>
+          <p>{{ entreprise.address }}</p>
+          <p>Téléphone : {{ entreprise.phone }}</p>
+          <p>Courriel : {{ entreprise.email }}</p>
         </div>
       </router-link>
     </div>
@@ -27,37 +25,25 @@
 </template>
 
 <script>
+import { useEntreprise } from '@/composables/Entreprise'
+import { onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
 export default {
   name: 'Entreprises',
-  data() {
-    return {
-      entreprises: [
-        {
-          id: 1,
-          nom: 'Mediavox',
-          adresse: '985, rue Royale, Trois-Rivières, G9A 4H7',
-          telephone: '819 373-2325',
-          telecopieur: '819 373-8805',
-          logoUrl: 'src/assets/mediavox-logo.jpg'
-        },
-        {
-          id: 2,
-          nom: 'Mediavox',
-          adresse: '985, rue Royale, Trois-Rivières, G9A 4H7',
-          telephone: '819 373-2325',
-          telecopieur: '819 373-8805',
-          logoUrl: 'src/assets/mediavox-logo.jpg'
-        }
-      ]
-    }
-  },
-  methods: {
-    ajouterEntreprise() {
-      this.$router.push({ name: 'AjouterEntreprise' })
-    }
+  setup() {
+    const { entreprises, chargerEntreprises } = useEntreprise()
+    const route = useRoute()
+
+    onMounted(chargerEntreprises)
+
+    watch(() => route.path, chargerEntreprises, { immediate: true })
+
+    return { entreprises }
   }
 }
 </script>
+
 
 <style scoped>
 .content {
@@ -80,7 +66,7 @@ h2 {
 div {
   padding-bottom: 20px;
 }
-button {
+.button {
   width: 20%;
   padding: 10px;
   border: none;
@@ -89,8 +75,9 @@ button {
   background-color: #89a9e6;
   color: black;
   font-weight: bold;
+  text-decoration: none;
 }
-button:hover {
+.button:hover {
   background-color: #507ac8;
 }
 .grid {

@@ -5,9 +5,9 @@ import DemandesStage from '../views/DemandesStage.vue'
 import OffresStage from '../views/OffresStage.vue'
 import Candidats from '../views/Candidats.vue'
 import Entreprises from '../views/Entreprises.vue'
-import EntrepriseDetail from '../views/EntrepriseDetail.vue'
-import AjouterEntreprise from '../views/AjouterEntreprise.vue';
-
+import EntrepriseDetails from '../views/EntrepriseDetails.vue'
+import EntrepriseAjout from '../views/EntrepriseAjout.vue'
+import EntrepriseMiseAjour from '../views/EntrepriseMiseAjour.vue'
 
 const routes = [
   {
@@ -17,10 +17,30 @@ const routes = [
       { path: '', name: 'tableaubord', component: TableauBord },
       { path: 'candidats', name: 'Candidats', component: Candidats },
       { path: 'demandes-stage', name: 'DemandesStage', component: DemandesStage },
-      { path: 'entreprises', name: 'Entreprises', component: Entreprises },
-      { path: 'offres-stage', name: 'OffresStage', component: OffresStage },
-      { path: '/entreprises/:id', name: 'EntrepriseDetail', component: EntrepriseDetail },
-      { path: '/ajouter-entreprise', name: 'AjouterEntreprise', component: AjouterEntreprise }
+      {
+        path: 'entreprises',
+        name: 'Entreprises',
+        component: Entreprises
+      },
+      {
+        path: 'entreprises/:id',
+        name: 'EntrepriseDetails',
+        component: EntrepriseDetails
+      },
+      {
+        path: 'entreprises/ajouter',
+        name: 'EntrepriseAjout',
+        component: EntrepriseAjout
+      },
+      {
+    
+          path: '/entreprises/modifier/:id',
+          name: 'EntrepriseMiseAjour',
+          component: EntrepriseMiseAjour,
+          props: true
+        
+      },
+      { path: 'offres-stage', name: 'OffresStage', component: OffresStage }
     ]
   }
 ]
